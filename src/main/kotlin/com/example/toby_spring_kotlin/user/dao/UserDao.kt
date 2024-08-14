@@ -5,9 +5,9 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-class UserDao {
-
-    private val connectionMaker: ConnectionMaker = DConnectionMaker()
+class UserDao(
+    private val connectionMaker: ConnectionMaker
+) {
 
     fun add(user: User) {
         val c: Connection = connectionMaker.makeConnection()
