@@ -2,11 +2,10 @@ package com.example.toby_spring_kotlin.user.dao
 
 import com.example.toby_spring_kotlin.user.domain.User
 import java.sql.Connection
-import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-class UserDao {
+abstract class UserDao {
 
     fun add(user: User) {
         val c: Connection = getConnection()
@@ -41,6 +40,6 @@ class UserDao {
         return user
     }
 
-    private fun getConnection(): Connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "")
+    abstract fun getConnection(): Connection
 
 }
