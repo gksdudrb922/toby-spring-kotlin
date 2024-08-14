@@ -1,5 +1,6 @@
 package com.example.toby_spring_kotlin.user.dao
 
+import com.example.toby_spring_kotlin.infra.ConnectionMaker
 import com.example.toby_spring_kotlin.user.domain.User
 import java.sql.Connection
 import java.sql.PreparedStatement

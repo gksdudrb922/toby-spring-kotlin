@@ -1,6 +1,6 @@
 package com.example.toby_spring_kotlin
 
-import com.example.toby_spring_kotlin.user.dao.DaoFactory
+import com.example.toby_spring_kotlin.config.DaoFactory
 import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

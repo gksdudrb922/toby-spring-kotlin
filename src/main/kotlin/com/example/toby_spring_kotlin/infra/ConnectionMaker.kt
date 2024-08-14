@@ -1,4 +1,4 @@
-package com.example.toby_spring_kotlin.user.dao
+package com.example.toby_spring_kotlin.infra
 
 import java.sql.Connection
 
