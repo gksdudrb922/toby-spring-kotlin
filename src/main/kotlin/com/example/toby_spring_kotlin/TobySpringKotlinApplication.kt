@@ -1,9 +1,11 @@
 package com.example.toby_spring_kotlin
 
 import com.example.toby_spring_kotlin.config.DaoFactory
+import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 @SpringBootApplication
 class TobySpringKotlinApplication
@@ -11,7 +13,8 @@ class TobySpringKotlinApplication
 fun main(args: Array<String>) {
 	runApplication<TobySpringKotlinApplication>(*args)
 
-	val dao = DaoFactory().userDao()
+	val context = AnnotationConfigApplicationContext(DaoFactory::class.java)
+	val dao = context.getBean("userDao", UserDao::class.java)
 
 	val user = User().apply {
 		id = "1"
