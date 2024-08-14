@@ -7,10 +7,10 @@ import java.sql.ResultSet
 
 class UserDao {
 
-    private val simpleConnectionMaker: SimpleConnectionMaker = SimpleConnectionMaker()
+    private val connectionMaker: ConnectionMaker = DConnectionMaker()
 
     fun add(user: User) {
-        val c: Connection = simpleConnectionMaker.makeConnection()
+        val c: Connection = connectionMaker.makeConnection()
 
         val ps: PreparedStatement = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
         ps.setString(1, user.id)
@@ -24,7 +24,7 @@ class UserDao {
     }
 
     fun get(id: String): User {
-        val c: Connection = simpleConnectionMaker.makeConnection()
+        val c: Connection = connectionMaker.makeConnection()
         val ps: PreparedStatement = c.prepareStatement("select * from users where id = ?")
         ps.setString(1, id)
 
