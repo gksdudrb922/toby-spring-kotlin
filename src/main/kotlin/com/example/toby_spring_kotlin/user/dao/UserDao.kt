@@ -9,7 +9,7 @@ import java.sql.ResultSet
 class UserDao {
 
     fun add(user: User) {
-        val c: Connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "")
+        val c: Connection = getConnection()
 
         val ps: PreparedStatement = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
         ps.setString(1, user.id)
@@ -23,7 +23,7 @@ class UserDao {
     }
 
     fun get(id: String): User {
-        val c: Connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "")
+        val c: Connection = getConnection()
         val ps: PreparedStatement = c.prepareStatement("select * from users where id = ?")
         ps.setString(1, id)
 
@@ -40,5 +40,7 @@ class UserDao {
 
         return user
     }
+
+    private fun getConnection(): Connection = DriverManager.getConnection("jdbc:h2:~/test", "sa", "")
 
 }
