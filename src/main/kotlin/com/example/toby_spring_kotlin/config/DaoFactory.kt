@@ -1,26 +1,32 @@
 package com.example.toby_spring_kotlin.config
 
 import com.example.toby_spring_kotlin.account.dao.AccountDao
-import com.example.toby_spring_kotlin.infra.ConnectionMaker
-import com.example.toby_spring_kotlin.infra.DConnectionMaker
 import com.example.toby_spring_kotlin.message.dao.MessageDao
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
+import org.springframework.jdbc.datasource.DriverManagerDataSource
+import javax.sql.DataSource
 
 @Configuration
 class DaoFactory {
 
     @Bean
-    fun userDao(): UserDao = UserDao(connectionMaker())
+    fun userDao(): UserDao = UserDao(dataSource())
 
     @Bean
-    fun accountDao(): AccountDao = AccountDao(connectionMaker())
+    fun accountDao(): AccountDao = AccountDao(dataSource())
 
     @Bean
-    fun messageDao(): MessageDao = MessageDao(connectionMaker())
+    fun messageDao(): MessageDao = MessageDao(dataSource())
 
     @Bean
-    fun connectionMaker(): ConnectionMaker = DConnectionMaker()
+    @Primary
+    fun dataSource(): DataSource = DriverManagerDataSource(
+        "jdbc:h2:~/test",
+        "sa",
+        ""
+    )
 
 }

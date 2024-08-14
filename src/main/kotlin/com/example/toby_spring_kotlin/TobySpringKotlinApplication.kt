@@ -2,7 +2,7 @@ package com.example.toby_spring_kotlin
 
 import com.example.toby_spring_kotlin.config.CountingDaoFactory
 import com.example.toby_spring_kotlin.config.DaoFactory
-import com.example.toby_spring_kotlin.infra.CountingConnectionMaker
+import com.example.toby_spring_kotlin.infra.CountingDataSource
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -60,6 +60,6 @@ private fun userDaoCountingTest() {
 
 	println("${user2.id} 조회 성공")
 
-	val ccm = context.getBean("connectionMakerCounting", CountingConnectionMaker::class.java)
+	val ccm = context.getBean("dataSourceCounting", CountingDataSource::class.java)
 	println("Connection counter : ${ccm.counter}")
 }

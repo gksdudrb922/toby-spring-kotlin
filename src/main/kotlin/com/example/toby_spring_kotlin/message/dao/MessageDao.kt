@@ -1,7 +1,7 @@
 package com.example.toby_spring_kotlin.message.dao
 
-import com.example.toby_spring_kotlin.infra.ConnectionMaker
+import javax.sql.DataSource
 
 class MessageDao(
-    private val connectionMaker: ConnectionMaker
+    private val dataSource: DataSource
 )

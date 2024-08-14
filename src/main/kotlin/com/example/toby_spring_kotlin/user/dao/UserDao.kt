@@ -1,17 +1,17 @@
 package com.example.toby_spring_kotlin.user.dao
 
-import com.example.toby_spring_kotlin.infra.ConnectionMaker
 import com.example.toby_spring_kotlin.user.domain.User
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
+import javax.sql.DataSource
 
 class UserDao(
-    private val connectionMaker: ConnectionMaker
+    private val dataSource: DataSource
 ) {
 
     fun add(user: User) {
-        val c: Connection = connectionMaker.makeConnection()
+        val c: Connection = dataSource.connection
 
         val ps: PreparedStatement = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
         ps.setString(1, user.id)
@@ -25,7 +25,7 @@ class UserDao(
     }
 
     fun get(id: String): User {
-        val c: Connection = connectionMaker.makeConnection()
+        val c: Connection = dataSource.connection
         val ps: PreparedStatement = c.prepareStatement("select * from users where id = ?")
         ps.setString(1, id)
 
