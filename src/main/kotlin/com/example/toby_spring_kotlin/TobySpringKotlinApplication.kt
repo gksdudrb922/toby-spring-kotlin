@@ -1,6 +1,6 @@
 package com.example.toby_spring_kotlin
 
-import com.example.toby_spring_kotlin.user.dao.DUserDao
+import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -11,7 +11,7 @@ class TobySpringKotlinApplication
 fun main(args: Array<String>) {
 	runApplication<TobySpringKotlinApplication>(*args)
 
-	val dao = DUserDao()
+	val dao = UserDao()
 
 	val user = User().apply {
 		id = "1"

@@ -5,10 +5,12 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 
-abstract class UserDao {
+class UserDao {
+
+    private val simpleConnectionMaker: SimpleConnectionMaker = SimpleConnectionMaker()
 
     fun add(user: User) {
-        val c: Connection = getConnection()
+        val c: Connection = simpleConnectionMaker.makeConnection()
 
         val ps: PreparedStatement = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
         ps.setString(1, user.id)
@@ -22,7 +24,7 @@ abstract class UserDao {
     }
 
     fun get(id: String): User {
-        val c: Connection = getConnection()
+        val c: Connection = simpleConnectionMaker.makeConnection()
         val ps: PreparedStatement = c.prepareStatement("select * from users where id = ?")
         ps.setString(1, id)
 
@@ -39,7 +41,5 @@ abstract class UserDao {
 
         return user
     }
-
-    abstract fun getConnection(): Connection
 
 }
