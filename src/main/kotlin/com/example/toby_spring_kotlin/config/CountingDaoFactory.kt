@@ -14,7 +14,7 @@ class CountingDaoFactory {
     fun userDaoCounting(): UserDao = UserDao(dataSourceCounting())
 
     @Bean
-    fun dataSourceCounting(): DataSource = CountingDataSource(realDataSource())
+    fun dataSourceCounting(): CountingDataSource = CountingDataSource(realDataSource())
 
     @Bean
     fun realDataSource(): DataSource = DriverManagerDataSource(
