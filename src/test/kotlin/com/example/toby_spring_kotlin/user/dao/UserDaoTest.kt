@@ -15,6 +15,9 @@ class UserDaoTest {
         val context = AnnotationConfigApplicationContext(DaoFactory::class.java)
         val dao = context.getBean("userDao", UserDao::class.java)
 
+        dao.deleteAll()
+        assertEquals(0, dao.getCount())
+
         val user = User().apply {
             id = "1"
             name = "han"
@@ -22,6 +25,7 @@ class UserDaoTest {
         }
 
         dao.add(user)
+        assertEquals(1, dao.getCount())
 
         val user2 = dao.get(user.id!!)
         assertEquals(user.name, user2.name)
@@ -33,6 +37,9 @@ class UserDaoTest {
         val context = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
         val dao = context.getBean("userDaoCounting", UserDao::class.java)
 
+        dao.deleteAll()
+        assertEquals(0, dao.getCount())
+
         val user = User().apply {
             id = "2"
             name = "han"
@@ -40,13 +47,14 @@ class UserDaoTest {
         }
 
         dao.add(user)
+        assertEquals(1, dao.getCount())
 
         val user2 = dao.get(user.id!!)
         assertEquals(user.name, user2.name)
         assertEquals(user.password, user2.password)
 
         val ccm = context.getBean("dataSourceCounting", CountingDataSource::class.java)
-        assertEquals(2, ccm.counter)
+        assertEquals(5, ccm.counter)
     }
 
 }
