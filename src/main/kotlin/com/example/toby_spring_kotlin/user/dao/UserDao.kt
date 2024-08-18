@@ -1,6 +1,7 @@
 package com.example.toby_spring_kotlin.user.dao
 
 import com.example.toby_spring_kotlin.user.domain.User
+import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -30,15 +31,22 @@ class UserDao(
         ps.setString(1, id)
 
         val rs: ResultSet = ps.executeQuery()
-        rs.next()
-        val user = User()
-        user.id = rs.getString("id")
-        user.name = rs.getString("name")
-        user.password = rs.getString("password")
+        var user: User? = null
+        if (rs.next()) {
+            user = User(
+                id = rs.getString("id"),
+                name = rs.getString("name"),
+                password = rs.getString("password")
+            )
+        }
 
         rs.close()
         ps.close()
         c.close()
+
+        if (user == null) {
+            throw EmptyResultDataAccessException(1)
+        }
 
         return user
     }
