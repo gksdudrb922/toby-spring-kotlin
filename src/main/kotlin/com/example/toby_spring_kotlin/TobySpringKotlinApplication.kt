@@ -34,10 +34,13 @@ private fun userDaoTest() {
 	println("${user.id} 등록 성공")
 
 	val user2 = dao.get(user.id!!)
-	println(user2.name)
-	println(user2.password)
-
-	println("${user2.id} 조회 성공")
+	if (user.name != user2.name) {
+		println("테스트 실패 (name)")
+	} else if (user.password != user2.password) {
+		println("테스트 실패 (password)")
+	} else {
+		println("조회 테스트 성공")
+	}
 }
 
 private fun userDaoCountingTest() {
@@ -55,11 +58,18 @@ private fun userDaoCountingTest() {
 	println("${user.id} 등록 성공")
 
 	val user2 = dao.get(user.id!!)
-	println(user2.name)
-	println(user2.password)
-
-	println("${user2.id} 조회 성공")
+	if (user.name != user2.name) {
+		println("테스트 실패 (name)")
+	} else if (user.password != user2.password) {
+		println("테스트 실패 (password)")
+	} else {
+		println("조회 테스트 성공")
+	}
 
 	val ccm = context.getBean("dataSourceCounting", CountingDataSource::class.java)
-	println("Connection counter : ${ccm.counter}")
+	if (ccm.counter != 2) {
+		println("테스트 실패 (counter)")
+	} else {
+		println("카운터 테스트 성공")
+	}
 }
