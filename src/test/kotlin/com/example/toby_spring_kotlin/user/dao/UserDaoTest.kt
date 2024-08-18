@@ -5,23 +5,34 @@ import com.example.toby_spring_kotlin.config.DaoFactory
 import com.example.toby_spring_kotlin.infra.CountingDataSource
 import com.example.toby_spring_kotlin.user.domain.User
 import org.junit.jupiter.api.assertThrows
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.dao.EmptyResultDataAccessException
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UserDaoTest {
 
+    private lateinit var context: ApplicationContext
+    private lateinit var dao: UserDao
+    private lateinit var user1: User
+    private lateinit var user2: User
+    private lateinit var user3: User
+
+    @BeforeTest
+    fun setUp() {
+        context = AnnotationConfigApplicationContext(DaoFactory::class.java)
+        dao = context.getBean("userDao", UserDao::class.java)
+        user1 = User(id = "1", name = "han", password = "1234")
+        user2 = User(id = "2", name = "han", password = "1234")
+        user3 = User(id = "3", name = "han", password = "1234")
+    }
+
     @Test
     fun addAndGet() {
-        val context = AnnotationConfigApplicationContext(DaoFactory::class.java)
-        val dao = context.getBean("userDao", UserDao::class.java)
-
         dao.deleteAll()
         assertEquals(0, dao.getCount())
-
-        val user1 = User(id = "1", name = "han", password = "1234")
-        val user2 = User(id = "2", name = "han", password = "1234")
 
         dao.add(user1)
         dao.add(user2)
@@ -38,14 +49,11 @@ class UserDaoTest {
 
     @Test
     fun addAndGetAndCounter() {
-        val context = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
-        val dao = context.getBean("userDaoCounting", UserDao::class.java)
+        context = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
+        dao = context.getBean("userDaoCounting", UserDao::class.java)
 
         dao.deleteAll()
         assertEquals(0, dao.getCount())
-
-        val user1 = User(id = "1", name = "han", password = "1234")
-        val user2 = User(id = "2", name = "han", password = "1234")
 
         dao.add(user1)
         dao.add(user2)
@@ -65,15 +73,8 @@ class UserDaoTest {
 
     @Test
     fun count() {
-        val context = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
-        val dao = context.getBean("userDaoCounting", UserDao::class.java)
-
         dao.deleteAll()
         assertEquals(0, dao.getCount())
-
-        val user1 = User(id = "1", name = "han", password = "1234")
-        val user2 = User(id = "2", name = "han", password = "1234")
-        val user3 = User(id = "3", name = "han", password = "1234")
 
         dao.add(user1)
         assertEquals(1, dao.getCount())
@@ -87,9 +88,6 @@ class UserDaoTest {
 
     @Test
     fun getUserFailure() {
-        val context = AnnotationConfigApplicationContext(CountingDaoFactory::class.java)
-        val dao = context.getBean("userDaoCounting", UserDao::class.java)
-
         dao.deleteAll()
         assertEquals(0, dao.getCount())
 
