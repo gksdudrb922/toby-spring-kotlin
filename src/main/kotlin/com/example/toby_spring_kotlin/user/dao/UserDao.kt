@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
+import java.sql.SQLException
 import javax.sql.DataSource
 
 class UserDao(
@@ -12,37 +13,70 @@ class UserDao(
 ) {
 
     fun add(user: User) {
-        val c: Connection = dataSource.connection
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
 
-        val ps: PreparedStatement = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
-        ps.setString(1, user.id)
-        ps.setString(2, user.name)
-        ps.setString(3, user.password)
-
-        ps.executeUpdate()
-
-        ps.close()
-        c.close()
+        try {
+            c = dataSource.connection
+            ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
+            ps.setString(1, user.id)
+            ps.setString(2, user.name)
+            ps.setString(3, user.password)
+            ps.executeUpdate()
+        } catch (e: SQLException) {
+            throw e
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close()
+                } catch (_: SQLException) {}
+            }
+            if (c != null) {
+                try {
+                    c.close()
+                } catch (_: SQLException) {}
+            }
+        }
     }
 
     fun get(id: String): User {
-        val c: Connection = dataSource.connection
-        val ps: PreparedStatement = c.prepareStatement("select * from users where id = ?")
-        ps.setString(1, id)
-
-        val rs: ResultSet = ps.executeQuery()
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
+        var rs: ResultSet? = null
         var user: User? = null
-        if (rs.next()) {
-            user = User(
-                id = rs.getString("id"),
-                name = rs.getString("name"),
-                password = rs.getString("password")
-            )
-        }
 
-        rs.close()
-        ps.close()
-        c.close()
+        try {
+            c = dataSource.connection
+            ps = c.prepareStatement("select * from users where id = ?")
+            ps.setString(1, id)
+
+            rs = ps.executeQuery()
+            if (rs.next()) {
+                user = User(
+                    id = rs.getString("id"),
+                    name = rs.getString("name"),
+                    password = rs.getString("password")
+                )
+            }
+        } catch (e: SQLException) {
+            throw e
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close()
+                } catch (_: SQLException) {}
+            }
+            if (ps != null) {
+                try {
+                    ps.close()
+                } catch (_: SQLException) {}
+            }
+            if (c != null) {
+                try {
+                    c.close()
+                } catch (_: SQLException) {}
+            }
+        }
 
         if (user == null) {
             throw EmptyResultDataAccessException(1)
@@ -52,30 +86,59 @@ class UserDao(
     }
 
     fun deleteAll() {
-        val c: Connection = dataSource.connection
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
 
-        val ps: PreparedStatement = c.prepareStatement("delete from users")
-
-        ps.executeUpdate()
-
-        ps.close()
-        c.close()
+        try {
+            c = dataSource.connection
+            ps = c.prepareStatement("delete from users")
+            ps.executeUpdate()
+        } catch (e: SQLException) {
+            throw e
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close()
+                } catch (_: SQLException) {}
+            }
+            if (c != null) {
+                try {
+                    c.close()
+                } catch (_: SQLException) {}
+            }
+        }
     }
 
     fun getCount(): Int {
-        val c: Connection = dataSource.connection
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
+        var rs: ResultSet? = null
 
-        val ps: PreparedStatement = c.prepareStatement("select count(*) from users")
-
-        val rs: ResultSet = ps.executeQuery()
-        rs.next()
-        val count = rs.getInt(1)
-
-        rs.close()
-        ps.close()
-        c.close()
-
-        return count
+        try {
+            c = dataSource.connection
+            ps = c.prepareStatement("select count(*) from users")
+            rs = ps.executeQuery()
+            rs.next()
+            return rs.getInt(1)
+        } catch (e: SQLException) {
+            throw e
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close()
+                } catch (_: SQLException) {}
+            }
+            if (ps != null) {
+                try {
+                    ps.close()
+                } catch (_: SQLException) {}
+            }
+            if (c != null) {
+                try {
+                    c.close()
+                } catch (_: SQLException) {}
+            }
+        }
     }
 
 }
