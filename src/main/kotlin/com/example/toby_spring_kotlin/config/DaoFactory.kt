@@ -24,7 +24,7 @@ class DaoFactory {
     @Bean
     @Primary
     fun dataSource(): DataSource = DriverManagerDataSource(
-        "jdbc:h2:~/test",
+        "jdbc:h2:~/toby-spring-kotlin",
         "sa",
         ""
     )

@@ -8,17 +8,17 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource
 import javax.sql.DataSource
 
 @Configuration
-class CountingDaoFactory {
+class TestCountingDaoFactory {
 
     @Bean
-    fun userDaoCounting(): UserDao = UserDao(dataSourceCounting())
+    fun testUserDaoCounting(): UserDao = UserDao(testDataSourceCounting())
 
     @Bean
-    fun dataSourceCounting(): CountingDataSource = CountingDataSource(realDataSource())
+    fun testDataSourceCounting(): CountingDataSource = CountingDataSource(testRealDataSource())
 
     @Bean
-    fun realDataSource(): DataSource = DriverManagerDataSource(
-        "jdbc:h2:~/toby-spring-kotlin",
+    fun testRealDataSource(): DataSource = DriverManagerDataSource(
+        "jdbc:h2:~/test",
         "sa",
         ""
     )

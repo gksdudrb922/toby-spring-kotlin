@@ -1,7 +1,5 @@
 package com.example.toby_spring_kotlin.user.dao
 
-import com.example.toby_spring_kotlin.config.CountingDaoFactory
-import com.example.toby_spring_kotlin.config.DaoFactory
 import com.example.toby_spring_kotlin.infra.CountingDataSource
 import com.example.toby_spring_kotlin.user.domain.User
 import org.junit.jupiter.api.assertThrows
@@ -13,18 +11,19 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@SpringBootTest(classes = [DaoFactory::class, CountingDaoFactory::class])
+@SpringBootTest
 class UserDaoTest {
 
     @Autowired
-    @Qualifier("userDao")
+    @Qualifier("testUserDao")
     private lateinit var dao: UserDao
 
     @Autowired
-    @Qualifier("userDaoCounting")
+    @Qualifier("testUserDaoCounting")
     private lateinit var daoCounting: UserDao
 
     @Autowired
+    @Qualifier("testDataSourceCounting")
     private lateinit var dataSourceCounting: CountingDataSource
 
     private val user1 = User(id = "1", name = "han", password = "1234")
