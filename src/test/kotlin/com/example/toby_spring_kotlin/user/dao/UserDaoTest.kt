@@ -76,4 +76,34 @@ class UserDaoTest {
         assertThrows<EmptyResultDataAccessException> { dao.get("unknown_id") }
     }
 
+    @Test
+    fun getAll() {
+        val users0 = dao.getAll()
+        assertEquals(0, users0.size)
+
+        dao.add(user1)
+        val users1 = dao.getAll()
+        assertEquals(1, users1.size)
+        checkSameUser(user1, users1[0])
+
+        dao.add(user2)
+        val users2 = dao.getAll()
+        assertEquals(2, users2.size)
+        checkSameUser(user1, users2[0])
+        checkSameUser(user2, users2[1])
+
+        dao.add(user3)
+        val users3 = dao.getAll()
+        assertEquals(3, users3.size)
+        checkSameUser(user1, users3[0])
+        checkSameUser(user2, users3[1])
+        checkSameUser(user3, users3[2])
+    }
+
+    private fun checkSameUser(user1: User, user2: User) {
+        assertEquals(user1.id, user2.id)
+        assertEquals(user1.name, user2.name)
+        assertEquals(user1.password, user2.password)
+    }
+
 }

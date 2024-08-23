@@ -36,4 +36,16 @@ class UserDao(
         return jdbcTemplate.queryForObject<Int>("select count(*) from users")
     }
 
+    fun getAll(): List<User> {
+        return jdbcTemplate.query(
+            "select * from users order by id"
+        ) { rs, _ ->
+            User(
+                id = rs.getString("id"),
+                name = rs.getString("name"),
+                password = rs.getString("password")
+            )
+        }
+    }
+
 }
