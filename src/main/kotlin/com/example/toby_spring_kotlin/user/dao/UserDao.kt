@@ -13,7 +13,15 @@ class UserDao(
 ) {
 
     fun add(user: User) {
-        jdbcContextWithStatementStrategy(AddStatement(user))
+        jdbcContextWithStatementStrategy(object : StatementStrategy {
+            override fun makePreparedStatement(c: Connection): PreparedStatement {
+                val ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
+                ps.setString(1, user.id)
+                ps.setString(2, user.name)
+                ps.setString(3, user.password)
+                return ps
+            }
+        })
     }
 
     fun get(id: String): User {
@@ -63,7 +71,11 @@ class UserDao(
     }
 
     fun deleteAll() {
-        jdbcContextWithStatementStrategy(DeleteAllStatement())
+        jdbcContextWithStatementStrategy(object : StatementStrategy {
+            override fun makePreparedStatement(c: Connection): PreparedStatement {
+                return c.prepareStatement("delete from users")
+            }
+        })
     }
 
     fun getCount(): Int {
