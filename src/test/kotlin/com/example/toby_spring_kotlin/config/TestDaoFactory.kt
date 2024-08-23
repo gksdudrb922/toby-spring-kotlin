@@ -1,9 +1,9 @@
 package com.example.toby_spring_kotlin.config
 
-import com.example.toby_spring_kotlin.infra.JdbcContext
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import javax.sql.DataSource
 
@@ -11,10 +11,10 @@ import javax.sql.DataSource
 class TestDaoFactory {
 
     @Bean
-    fun testUserDao(): UserDao = UserDao(testJdbcContext(), testDataSource())
+    fun testUserDao(): UserDao = UserDao(testJdbcTemplate(), testDataSource())
 
     @Bean
-    fun testJdbcContext(): JdbcContext = JdbcContext(testDataSource())
+    fun testJdbcTemplate(): JdbcTemplate = JdbcTemplate(testDataSource())
 
     @Bean
     fun testDataSource(): DataSource = DriverManagerDataSource(

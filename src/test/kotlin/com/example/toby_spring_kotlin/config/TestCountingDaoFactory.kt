@@ -1,10 +1,10 @@
 package com.example.toby_spring_kotlin.config
 
 import com.example.toby_spring_kotlin.infra.CountingDataSource
-import com.example.toby_spring_kotlin.infra.JdbcContext
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import javax.sql.DataSource
 
@@ -12,10 +12,10 @@ import javax.sql.DataSource
 class TestCountingDaoFactory {
 
     @Bean
-    fun testUserDaoCounting(): UserDao = UserDao(testJdbcContextCounting(), testDataSourceCounting())
+    fun testUserDaoCounting(): UserDao = UserDao(testJdbcTemplateCounting(), testDataSourceCounting())
 
     @Bean
-    fun testJdbcContextCounting(): JdbcContext = JdbcContext(testDataSourceCounting())
+    fun testJdbcTemplateCounting(): JdbcTemplate = JdbcTemplate(testDataSourceCounting())
 
     @Bean
     fun testDataSourceCounting(): CountingDataSource = CountingDataSource(testRealDataSource())

@@ -1,7 +1,7 @@
 package com.example.toby_spring_kotlin.account.dao
 
-import com.example.toby_spring_kotlin.infra.JdbcContext
+import org.springframework.jdbc.core.JdbcTemplate
 
 class AccountDao(
-    private val jdbcContext: JdbcContext,
+    private val jdbcTemplate: JdbcTemplate,
 )
