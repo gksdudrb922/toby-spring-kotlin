@@ -1,7 +1,7 @@
 package com.example.toby_spring_kotlin.account.dao
 
-import javax.sql.DataSource
+import com.example.toby_spring_kotlin.infra.JdbcContext
 
 class AccountDao(
-    private val dataSource: DataSource
+    private val jdbcContext: JdbcContext,
 )

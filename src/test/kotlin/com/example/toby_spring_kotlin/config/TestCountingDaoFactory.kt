@@ -1,6 +1,7 @@
 package com.example.toby_spring_kotlin.config
 
 import com.example.toby_spring_kotlin.infra.CountingDataSource
+import com.example.toby_spring_kotlin.infra.JdbcContext
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,7 +12,10 @@ import javax.sql.DataSource
 class TestCountingDaoFactory {
 
     @Bean
-    fun testUserDaoCounting(): UserDao = UserDao(testDataSourceCounting())
+    fun testUserDaoCounting(): UserDao = UserDao(testJdbcContextCounting(), testDataSourceCounting())
+
+    @Bean
+    fun testJdbcContextCounting(): JdbcContext = JdbcContext(testDataSourceCounting())
 
     @Bean
     fun testDataSourceCounting(): CountingDataSource = CountingDataSource(testRealDataSource())

@@ -1,5 +1,7 @@
 package com.example.toby_spring_kotlin.user.dao
 
+import com.example.toby_spring_kotlin.infra.JdbcContext
+import com.example.toby_spring_kotlin.infra.StatementStrategy
 import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
 import java.sql.Connection
@@ -9,11 +11,12 @@ import java.sql.SQLException
 import javax.sql.DataSource
 
 class UserDao(
-    private val dataSource: DataSource
+    private val jdbcContext: JdbcContext,
+    private val dataSource: DataSource,
 ) {
 
     fun add(user: User) {
-        jdbcContextWithStatementStrategy(object : StatementStrategy {
+        jdbcContext.workWithStatementStrategy(object : StatementStrategy {
             override fun makePreparedStatement(c: Connection): PreparedStatement {
                 val ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
                 ps.setString(1, user.id)
@@ -71,7 +74,7 @@ class UserDao(
     }
 
     fun deleteAll() {
-        jdbcContextWithStatementStrategy(object : StatementStrategy {
+        jdbcContext.workWithStatementStrategy(object : StatementStrategy {
             override fun makePreparedStatement(c: Connection): PreparedStatement {
                 return c.prepareStatement("delete from users")
             }
@@ -97,30 +100,6 @@ class UserDao(
                     rs.close()
                 } catch (_: SQLException) {}
             }
-            if (ps != null) {
-                try {
-                    ps.close()
-                } catch (_: SQLException) {}
-            }
-            if (c != null) {
-                try {
-                    c.close()
-                } catch (_: SQLException) {}
-            }
-        }
-    }
-
-    private fun jdbcContextWithStatementStrategy(stmt: StatementStrategy) {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = dataSource.connection
-            ps = stmt.makePreparedStatement(c)
-            ps.executeUpdate()
-        } catch (e: SQLException) {
-            throw e
-        } finally {
             if (ps != null) {
                 try {
                     ps.close()
