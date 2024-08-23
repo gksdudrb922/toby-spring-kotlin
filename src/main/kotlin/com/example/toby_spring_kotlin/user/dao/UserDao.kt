@@ -4,10 +4,19 @@ import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.queryForObject
+import java.sql.ResultSet
 
 class UserDao(
     private val jdbcTemplate: JdbcTemplate,
 ) {
+
+    private val userMapper: (rs: ResultSet, rowNum: Int) -> User? = { rs, _ ->
+        User(
+            id = rs.getString("id"),
+            name = rs.getString("name"),
+            password = rs.getString("password")
+        )
+    }
 
     fun add(user: User) {
         jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
@@ -15,17 +24,8 @@ class UserDao(
     }
 
     fun get(id: String): User {
-        return jdbcTemplate.queryForObject(
-            "select * from users where id = ?",
-            { rs, _ ->
-                User(
-                    id = rs.getString("id"),
-                    name = rs.getString("name"),
-                    password = rs.getString("password")
-                )
-            },
-            id,
-        ) ?: throw EmptyResultDataAccessException(1)
+        return jdbcTemplate.queryForObject("select * from users where id = ?", userMapper, id)
+            ?: throw EmptyResultDataAccessException(1)
     }
 
     fun deleteAll() {
@@ -37,15 +37,7 @@ class UserDao(
     }
 
     fun getAll(): List<User> {
-        return jdbcTemplate.query(
-            "select * from users order by id"
-        ) { rs, _ ->
-            User(
-                id = rs.getString("id"),
-                name = rs.getString("name"),
-                password = rs.getString("password")
-            )
-        }
+        return jdbcTemplate.query("select * from users order by id", userMapper)
     }
 
 }
