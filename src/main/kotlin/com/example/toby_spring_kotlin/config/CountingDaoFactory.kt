@@ -12,7 +12,7 @@ import javax.sql.DataSource
 class CountingDaoFactory {
 
     @Bean
-    fun userDaoCounting(): UserDao = UserDao(jdbcTemplateCounting(), dataSourceCounting())
+    fun userDaoCounting(): UserDao = UserDao(jdbcTemplateCounting())
 
     @Bean
     fun jdbcTemplateCounting(): JdbcTemplate = JdbcTemplate(dataSourceCounting())

@@ -11,7 +11,7 @@ import javax.sql.DataSource
 class TestDaoFactory {
 
     @Bean
-    fun testUserDao(): UserDao = UserDao(testJdbcTemplate(), testDataSource())
+    fun testUserDao(): UserDao = UserDao(testJdbcTemplate())
 
     @Bean
     fun testJdbcTemplate(): JdbcTemplate = JdbcTemplate(testDataSource())

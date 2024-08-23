@@ -14,8 +14,7 @@ import javax.sql.DataSource
 class DaoFactory {
 
     @Bean
-    // 아직 JdbcContext를 적용하지 않은 메소드가 있어서 dataSource()는 유지한다.
-    fun userDao(): UserDao = UserDao(jdbcTemplate(), dataSource())
+    fun userDao(): UserDao = UserDao(jdbcTemplate())
 
     @Bean
     fun accountDao(): AccountDao = AccountDao(jdbcTemplate())
