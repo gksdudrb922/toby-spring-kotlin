@@ -9,6 +9,14 @@ class JdbcContext(
     private val dataSource: DataSource
 ) {
 
+    fun executeSql(query: String) {
+        workWithStatementStrategy(object : StatementStrategy {
+            override fun makePreparedStatement(c: Connection): PreparedStatement {
+                return c.prepareStatement(query)
+            }
+        })
+    }
+
     fun workWithStatementStrategy(stmt: StatementStrategy) {
         var c: Connection? = null
         var ps: PreparedStatement? = null

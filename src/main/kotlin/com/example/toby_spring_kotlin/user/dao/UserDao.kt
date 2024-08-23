@@ -74,11 +74,7 @@ class UserDao(
     }
 
     fun deleteAll() {
-        jdbcContext.workWithStatementStrategy(object : StatementStrategy {
-            override fun makePreparedStatement(c: Connection): PreparedStatement {
-                return c.prepareStatement("delete from users")
-            }
-        })
+        jdbcContext.executeSql("delete from users")
     }
 
     fun getCount(): Int {
