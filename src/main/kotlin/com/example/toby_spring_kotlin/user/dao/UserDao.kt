@@ -86,27 +86,7 @@ class UserDao(
     }
 
     fun deleteAll() {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = dataSource.connection
-            ps = c.prepareStatement("delete from users")
-            ps.executeUpdate()
-        } catch (e: SQLException) {
-            throw e
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close()
-                } catch (_: SQLException) {}
-            }
-            if (c != null) {
-                try {
-                    c.close()
-                } catch (_: SQLException) {}
-            }
-        }
+        jdbcContextWithStatementStrategy(DeleteAllStatement())
     }
 
     fun getCount(): Int {
@@ -128,6 +108,30 @@ class UserDao(
                     rs.close()
                 } catch (_: SQLException) {}
             }
+            if (ps != null) {
+                try {
+                    ps.close()
+                } catch (_: SQLException) {}
+            }
+            if (c != null) {
+                try {
+                    c.close()
+                } catch (_: SQLException) {}
+            }
+        }
+    }
+
+    private fun jdbcContextWithStatementStrategy(stmt: StatementStrategy) {
+        var c: Connection? = null
+        var ps: PreparedStatement? = null
+
+        try {
+            c = dataSource.connection
+            ps = stmt.makePreparedStatement(c)
+            ps.executeUpdate()
+        } catch (e: SQLException) {
+            throw e
+        } finally {
             if (ps != null) {
                 try {
                     ps.close()
