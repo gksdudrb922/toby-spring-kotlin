@@ -13,30 +13,7 @@ class UserDao(
 ) {
 
     fun add(user: User) {
-        var c: Connection? = null
-        var ps: PreparedStatement? = null
-
-        try {
-            c = dataSource.connection
-            ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)")
-            ps.setString(1, user.id)
-            ps.setString(2, user.name)
-            ps.setString(3, user.password)
-            ps.executeUpdate()
-        } catch (e: SQLException) {
-            throw e
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close()
-                } catch (_: SQLException) {}
-            }
-            if (c != null) {
-                try {
-                    c.close()
-                } catch (_: SQLException) {}
-            }
-        }
+        jdbcContextWithStatementStrategy(AddStatement(user))
     }
 
     fun get(id: String): User {
