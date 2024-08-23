@@ -6,7 +6,11 @@ import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator
+import java.sql.SQLException
+import javax.sql.DataSource
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,6 +21,10 @@ class UserDaoTest {
     @Autowired
     @Qualifier("testUserDao")
     private lateinit var dao: UserDao
+
+    @Autowired
+    @Qualifier("testDataSource")
+    private lateinit var dataSource: DataSource
 
     @Autowired
     @Qualifier("testUserDaoCounting")
@@ -104,6 +112,27 @@ class UserDaoTest {
         assertEquals(user1.id, user2.id)
         assertEquals(user1.name, user2.name)
         assertEquals(user1.password, user2.password)
+    }
+
+    @Test
+    fun duplicateKey() {
+        dao.add(user1)
+        assertThrows<DuplicateKeyException> { dao.add(user1) }
+    }
+
+    @Test
+    fun sqlExceptionTranslate() {
+        try {
+            dao.add(user1)
+            dao.add(user1)
+        } catch (e: DuplicateKeyException) {
+            val sqlEx = e.rootCause as SQLException
+            val set = SQLErrorCodeSQLExceptionTranslator(dataSource)
+            assertEquals(
+                DuplicateKeyException::class.java,
+                set.translate(null.toString(), null, sqlEx)!!::class.java
+            )
+        }
     }
 
 }
