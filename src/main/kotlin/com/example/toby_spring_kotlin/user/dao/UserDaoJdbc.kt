@@ -24,7 +24,7 @@ class UserDaoJdbc(
 
     override fun add(user: User) {
         jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)",
-            user.id, user.name, user.password, user.level.intValue(), user.login, user.recommend)
+            user.id, user.name, user.password, user.level?.intValue(), user.login, user.recommend)
     }
 
     override fun get(id: String): User {
@@ -47,7 +47,7 @@ class UserDaoJdbc(
     override fun update(user: User) {
         jdbcTemplate.update(
             "update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?"
-            ,user.name, user.password, user.level.intValue(), user.login, user.recommend, user.id)
+            ,user.name, user.password, user.level?.intValue(), user.login, user.recommend, user.id)
     }
 
 }

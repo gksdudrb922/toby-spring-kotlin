@@ -2,6 +2,7 @@ package com.example.toby_spring_kotlin.user.service
 
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.Level
+import com.example.toby_spring_kotlin.user.domain.User
 
 class UserService(
     private val userDao: UserDao,
@@ -26,6 +27,13 @@ class UserService(
                 userDao.update(user)
             }
         }
+    }
+
+    fun add(user: User) {
+        if (user.level === null) {
+            user.level = Level.BASIC
+        }
+        userDao.add(user)
     }
 
 }

@@ -53,4 +53,20 @@ class UserServiceTest {
         assertEquals(expectedLevel, userUpdate.level)
     }
 
+    @Test
+    fun add() {
+        val userWithLevel = users[4]
+        val userWithoutLevel = users[0]
+        userWithoutLevel.level = null
+
+        userService.add(userWithLevel)
+        userService.add(userWithoutLevel)
+
+        val userWithLevelRead = userDao.get(userWithLevel.id)
+        val userWithoutLevelRead = userDao.get(userWithoutLevel.id)
+
+        assertEquals(userWithLevel.level, userWithLevelRead.level)
+        assertEquals(Level.BASIC, userWithoutLevelRead.level)
+    }
+
 }

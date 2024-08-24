@@ -4,7 +4,7 @@ class User(
     val id: String,
     var name: String,
     var password: String,
-    var level: Level,
+    var level: Level? = null,
     var login: Int,
     var recommend: Int,
 )
