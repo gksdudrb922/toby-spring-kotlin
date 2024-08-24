@@ -1,6 +1,7 @@
 package com.example.toby_spring_kotlin.user.dao
 
 import com.example.toby_spring_kotlin.infra.CountingDataSource
+import com.example.toby_spring_kotlin.user.domain.Level
 import com.example.toby_spring_kotlin.user.domain.User
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,9 +35,12 @@ class UserDaoTest {
     @Qualifier("testDataSourceCounting")
     private lateinit var dataSourceCounting: CountingDataSource
 
-    private val user1 = User(id = "1", name = "han", password = "1234")
-    private val user2 = User(id = "2", name = "han", password = "1234")
-    private val user3 = User(id = "3", name = "han", password = "1234")
+    private val user1 =
+        User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = 1, recommend = 0)
+    private val user2 =
+        User(id = "2", name = "han", password = "1234", level = Level.SILVER, login = 55, recommend = 10)
+    private val user3 =
+        User(id = "3", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = 40)
 
     @BeforeTest
     fun setup() {
@@ -51,12 +55,10 @@ class UserDaoTest {
         assertEquals(2, dao.getCount())
 
         val userGet1 = dao.get(user1.id)
-        assertEquals(user1.name, userGet1.name)
-        assertEquals(user1.password, userGet1.password)
+        checkSameUser(user1, userGet1)
 
         val userGet2 = dao.get(user2.id)
-        assertEquals(user2.name, userGet2.name)
-        assertEquals(user2.password, userGet2.password)
+        checkSameUser(user2, userGet2)
     }
 
     @Test
@@ -112,6 +114,9 @@ class UserDaoTest {
         assertEquals(user1.id, user2.id)
         assertEquals(user1.name, user2.name)
         assertEquals(user1.password, user2.password)
+        assertEquals(user1.level, user2.level)
+        assertEquals(user1.login, user2.login)
+        assertEquals(user1.recommend, user2.recommend)
     }
 
     @Test

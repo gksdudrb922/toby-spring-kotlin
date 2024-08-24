@@ -1,5 +1,6 @@
 package com.example.toby_spring_kotlin.user.dao
 
+import com.example.toby_spring_kotlin.user.domain.Level
 import com.example.toby_spring_kotlin.user.domain.User
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
@@ -14,13 +15,16 @@ class UserDaoJdbc(
         User(
             id = rs.getString("id"),
             name = rs.getString("name"),
-            password = rs.getString("password")
+            password = rs.getString("password"),
+            level = Level.valueOf(rs.getInt("level")),
+            login = rs.getInt("login"),
+            recommend = rs.getInt("recommend"),
         )
     }
 
     override fun add(user: User) {
-        jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
-            user.id, user.name, user.password)
+        jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?,?,?,?,?,?)",
+            user.id, user.name, user.password, user.level.intValue(), user.login, user.recommend)
     }
 
     override fun get(id: String): User {
