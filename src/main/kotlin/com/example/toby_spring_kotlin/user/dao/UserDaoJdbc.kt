@@ -44,4 +44,10 @@ class UserDaoJdbc(
         return jdbcTemplate.query("select * from users order by id", userMapper)
     }
 
+    override fun update(user: User) {
+        jdbcTemplate.update(
+            "update users set name = ?, password = ?, level = ?, login = ?, recommend = ? where id = ?"
+            ,user.name, user.password, user.level.intValue(), user.login, user.recommend, user.id)
+    }
+
 }

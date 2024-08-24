@@ -140,4 +140,22 @@ class UserDaoTest {
         }
     }
 
+    @Test
+    fun update() {
+        dao.add(user1)
+        dao.add(user2)
+
+        user1.name = "han2"
+        user1.password = "12345"
+        user1.level = Level.GOLD
+        user1.login = 1000
+        user1.recommend = 999
+        dao.update(user1)
+
+        val user1update = dao.get(user1.id)
+        checkSameUser(user1, user1update)
+        val user2same = dao.get(user2.id)
+        checkSameUser(user2, user2same)
+    }
+
 }

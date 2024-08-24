@@ -14,4 +14,6 @@ interface UserDao {
 
     fun getAll(): List<User>
 
+    fun update(user: User)
+
 }
