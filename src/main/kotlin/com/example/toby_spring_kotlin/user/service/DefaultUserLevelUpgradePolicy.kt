@@ -4,7 +4,7 @@ import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.Level
 import com.example.toby_spring_kotlin.user.domain.User
 
-class DefaultUserLevelUpgradePolicy(
+open class DefaultUserLevelUpgradePolicy(
     private val userDao: UserDao,
 ) : UserLevelUpgradePolicy {
 

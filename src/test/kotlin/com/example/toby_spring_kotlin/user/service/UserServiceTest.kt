@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.fail
 
 @SpringBootTest
 class UserServiceTest {
@@ -74,4 +75,33 @@ class UserServiceTest {
         assertEquals(Level.BASIC, userWithoutLevelRead.level)
     }
 
+    @Test
+    fun upgradeAllOrNothing() {
+        users.forEach { user -> userDao.add(user) }
+        val testUserService = UserService(TestUserLevelUpgradePolicy(userDao, users[3].id), userDao)
+
+        try {
+            testUserService.upgradeLevels()
+            fail("TestUserServiceException expected")
+        } catch (_: TestUserServiceException) {
+            checkLevelUpgraded(users[1], true)
+        }
+    }
+
 }
+
+class TestUserLevelUpgradePolicy (
+    userDao: UserDao,
+    private val id: String,
+) : DefaultUserLevelUpgradePolicy(userDao) {
+
+    override fun upgradeLevel(user: User) {
+        if (user.id == id) {
+            throw TestUserServiceException()
+        }
+        super.upgradeLevel(user)
+    }
+
+}
+
+class TestUserServiceException : RuntimeException()
