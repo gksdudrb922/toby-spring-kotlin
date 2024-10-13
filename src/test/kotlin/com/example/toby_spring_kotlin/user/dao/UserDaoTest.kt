@@ -36,11 +36,11 @@ class UserDaoTest {
     private lateinit var dataSourceCounting: CountingDataSource
 
     private val user1 =
-        User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = 1, recommend = 0)
+        User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = 1, recommend = 0, email = "123")
     private val user2 =
-        User(id = "2", name = "han", password = "1234", level = Level.SILVER, login = 55, recommend = 10)
+        User(id = "2", name = "han", password = "1234", level = Level.SILVER, login = 55, recommend = 10, email = "123")
     private val user3 =
-        User(id = "3", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = 40)
+        User(id = "3", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = 40, email = "123")
 
     @BeforeTest
     fun setup() {
@@ -117,6 +117,7 @@ class UserDaoTest {
         assertEquals(user1.level, user2.level)
         assertEquals(user1.login, user2.login)
         assertEquals(user1.recommend, user2.recommend)
+        assertEquals(user1.email, user2.email)
     }
 
     @Test
@@ -150,6 +151,7 @@ class UserDaoTest {
         user1.level = Level.GOLD
         user1.login = 1000
         user1.recommend = 999
+        user1.email = "1234"
         dao.update(user1)
 
         val user1update = dao.get(user1.id)

@@ -7,6 +7,7 @@ class User(
     var level: Level? = null,
     var login: Int,
     var recommend: Int,
+    var email: String,
  ) {
 
     fun upgradeLevel() {

@@ -11,7 +11,7 @@ class UserTest {
 
     @BeforeTest
     fun setUp() {
-        user = User(id = "1", name = "han", password = "1234", level = null, login = 1, recommend = 0)
+        user = User(id = "1", name = "han", password = "1234", level = null, login = 1, recommend = 0, email = "123")
     }
 
     @Test

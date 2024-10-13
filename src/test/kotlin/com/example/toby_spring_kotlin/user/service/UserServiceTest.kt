@@ -35,11 +35,11 @@ class UserServiceTest {
     fun setUp() {
         userDao.deleteAll()
         users = listOf(
-            User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = MIN_LOGCOUNT_FOR_SILVER - 1, recommend = 0),
-            User(id = "2", name = "han", password = "1234", level = Level.BASIC, login = MIN_LOGCOUNT_FOR_SILVER, recommend = 0),
-            User(id = "3", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = MIN_RECCOUNT_FOR_GOLD - 1),
-            User(id = "4", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = MIN_RECCOUNT_FOR_GOLD),
-            User(id = "5", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = Int.MAX_VALUE),
+            User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = MIN_LOGCOUNT_FOR_SILVER - 1, recommend = 0, email = "123"),
+            User(id = "2", name = "han", password = "1234", level = Level.BASIC, login = MIN_LOGCOUNT_FOR_SILVER, recommend = 0, email = "123"),
+            User(id = "3", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = MIN_RECCOUNT_FOR_GOLD - 1, email = "123"),
+            User(id = "4", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = MIN_RECCOUNT_FOR_GOLD, email = "123"),
+            User(id = "5", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = Int.MAX_VALUE, email = "123"),
         )
     }
 
