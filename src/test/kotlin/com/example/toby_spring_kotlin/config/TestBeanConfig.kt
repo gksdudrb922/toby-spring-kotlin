@@ -9,20 +9,27 @@ import com.example.toby_spring_kotlin.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
 @Configuration
 class TestBeanConfig {
 
     @Bean
-    fun testUserService(): UserService = UserService(testUserLevelUpgradePolicy(), testUserDao(), testDataSource())
+    fun testUserService(): UserService =
+        UserService(testUserLevelUpgradePolicy(), testUserDao(), testTransactionManager(testDataSource()))
 
     @Bean
     fun testUserLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(testUserDao())
 
     @Bean
     fun testUserDao(): UserDao = UserDaoJdbc(testJdbcTemplate())
+
+    @Bean
+    fun testTransactionManager(dataSource: DataSource): PlatformTransactionManager =
+        DataSourceTransactionManager(dataSource)
 
     @Bean
     fun testJdbcTemplate(): JdbcTemplate = JdbcTemplate(testDataSource())

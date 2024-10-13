@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
-import javax.sql.DataSource
+import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.fail
@@ -26,8 +26,8 @@ class UserServiceTest {
     private lateinit var userDao: UserDao
 
     @Autowired
-    @Qualifier("testDataSource")
-    private lateinit var dataSource: DataSource
+    @Qualifier("testTransactionManager")
+    private lateinit var transactionManager: PlatformTransactionManager
 
     private lateinit var users: List<User>
 
@@ -83,7 +83,7 @@ class UserServiceTest {
     @Test
     fun upgradeAllOrNothing() {
         users.forEach { user -> userDao.add(user) }
-        val testUserService = UserService(TestUserLevelUpgradePolicy(userDao, users[3].id), userDao, dataSource)
+        val testUserService = UserService(TestUserLevelUpgradePolicy(userDao, users[3].id), userDao, transactionManager)
 
         try {
             testUserService.upgradeLevels()

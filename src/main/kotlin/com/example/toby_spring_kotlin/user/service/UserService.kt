@@ -3,21 +3,18 @@ package com.example.toby_spring_kotlin.user.service
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.Level
 import com.example.toby_spring_kotlin.user.domain.User
-import org.springframework.jdbc.datasource.DataSourceUtils
-import org.springframework.transaction.support.TransactionSynchronizationManager
-import java.sql.Connection
-import javax.sql.DataSource
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.support.DefaultTransactionDefinition
 
 class UserService(
     private val userLevelUpgradePolicy: UserLevelUpgradePolicy,
     private val userDao: UserDao,
-    private val dataSource: DataSource,
+    private val transactionManager: PlatformTransactionManager,
 ) {
 
     fun upgradeLevels() {
-        TransactionSynchronizationManager.initSynchronization()
-        val c: Connection = DataSourceUtils.getConnection(dataSource)
-        c.autoCommit = false
+        val status: TransactionStatus = transactionManager.getTransaction(DefaultTransactionDefinition())
 
         try {
             val users = userDao.getAll()
@@ -26,14 +23,10 @@ class UserService(
                     userLevelUpgradePolicy.upgradeLevel(user)
                 }
             }
-            c.commit()
+            transactionManager.commit(status)
         } catch (e: Exception) {
-            c.rollback()
+            transactionManager.rollback(status)
             throw e
-        } finally {
-            DataSourceUtils.releaseConnection(c, dataSource)
-            TransactionSynchronizationManager.unbindResource(dataSource)
-            TransactionSynchronizationManager.clearSynchronization()
         }
     }
 

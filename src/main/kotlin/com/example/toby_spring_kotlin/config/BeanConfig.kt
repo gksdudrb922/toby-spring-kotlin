@@ -10,17 +10,23 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
 @Configuration
 class BeanConfig {
 
     @Bean
-    fun userService(): UserService = UserService(userLevelUpgradePolicy(), userDao(), dataSource())
+    fun userService(): UserService = UserService(userLevelUpgradePolicy(), userDao(), transactionManager(dataSource()))
 
     @Bean
     fun userLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(userDao())
+
+    @Bean
+    fun transactionManager(dataSource: DataSource): PlatformTransactionManager =
+        DataSourceTransactionManager(dataSource)
 
     @Bean
     fun userDao(): UserDao = UserDaoJdbc(jdbcTemplate())
