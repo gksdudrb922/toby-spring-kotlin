@@ -16,7 +16,7 @@ import javax.sql.DataSource
 class TestBeanConfig {
 
     @Bean
-    fun testUserService(): UserService = UserService(testUserLevelUpgradePolicy(), testUserDao())
+    fun testUserService(): UserService = UserService(testUserLevelUpgradePolicy(), testUserDao(), testDataSource())
 
     @Bean
     fun testUserLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(testUserDao())

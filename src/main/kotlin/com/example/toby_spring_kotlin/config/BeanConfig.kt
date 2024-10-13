@@ -17,7 +17,7 @@ import javax.sql.DataSource
 class BeanConfig {
 
     @Bean
-    fun userService(): UserService = UserService(userLevelUpgradePolicy(), userDao())
+    fun userService(): UserService = UserService(userLevelUpgradePolicy(), userDao(), dataSource())
 
     @Bean
     fun userLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(userDao())
