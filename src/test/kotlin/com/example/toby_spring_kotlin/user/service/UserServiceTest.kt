@@ -3,6 +3,8 @@ package com.example.toby_spring_kotlin.user.service
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.domain.Level
 import com.example.toby_spring_kotlin.user.domain.User
+import com.example.toby_spring_kotlin.user.service.DefaultUserLevelUpgradePolicy.Companion.MIN_LOGCOUNT_FOR_SILVER
+import com.example.toby_spring_kotlin.user.service.DefaultUserLevelUpgradePolicy.Companion.MIN_RECCOUNT_FOR_GOLD
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -27,11 +29,11 @@ class UserServiceTest {
     fun setUp() {
         userDao.deleteAll()
         users = listOf(
-            User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = 49, recommend = 0),
-            User(id = "2", name = "han", password = "1234", level = Level.BASIC, login = 50, recommend = 0),
-            User(id = "3", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = 29),
-            User(id = "4", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = 30),
-            User(id = "5", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = 100),
+            User(id = "1", name = "han", password = "1234", level = Level.BASIC, login = MIN_LOGCOUNT_FOR_SILVER - 1, recommend = 0),
+            User(id = "2", name = "han", password = "1234", level = Level.BASIC, login = MIN_LOGCOUNT_FOR_SILVER, recommend = 0),
+            User(id = "3", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = MIN_RECCOUNT_FOR_GOLD - 1),
+            User(id = "4", name = "han", password = "1234", level = Level.SILVER, login = 60, recommend = MIN_RECCOUNT_FOR_GOLD),
+            User(id = "5", name = "han", password = "1234", level = Level.GOLD, login = 100, recommend = Int.MAX_VALUE),
         )
     }
 
@@ -40,17 +42,20 @@ class UserServiceTest {
         users.forEach { user -> userDao.add(user) }
 
         userService.upgradeLevels()
-        checkLevel(Level.BASIC, users[0])
-        checkLevel(Level.SILVER, users[1])
-        checkLevel(Level.SILVER, users[2])
-        checkLevel(Level.GOLD, users[3])
-        checkLevel(Level.GOLD, users[4])
+        checkLevelUpgraded(users[0], false)
+        checkLevelUpgraded(users[1], true)
+        checkLevelUpgraded(users[2], false)
+        checkLevelUpgraded(users[3], true)
+        checkLevelUpgraded(users[4], false)
 
     }
 
-    private fun checkLevel(expectedLevel: Level, user: User) {
+    private fun checkLevelUpgraded(user: User, upgraded: Boolean) {
         val userUpdate = userDao.get(user.id)
-        assertEquals(expectedLevel, userUpdate.level)
+        when (upgraded) {
+            true -> assertEquals(user.level?.nextLevel(), userUpdate.level)
+            false -> assertEquals(user.level, userUpdate.level)
+        }
     }
 
     @Test

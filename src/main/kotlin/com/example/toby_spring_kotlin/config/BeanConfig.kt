@@ -3,6 +3,8 @@ package com.example.toby_spring_kotlin.config
 import com.example.toby_spring_kotlin.infra.CountingDataSource
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.dao.UserDaoJdbc
+import com.example.toby_spring_kotlin.user.service.DefaultUserLevelUpgradePolicy
+import com.example.toby_spring_kotlin.user.service.UserLevelUpgradePolicy
 import com.example.toby_spring_kotlin.user.service.UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,7 +17,10 @@ import javax.sql.DataSource
 class BeanConfig {
 
     @Bean
-    fun userService(): UserService = UserService(userDao())
+    fun userService(): UserService = UserService(userLevelUpgradePolicy(), userDao())
+
+    @Bean
+    fun userLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(userDao())
 
     @Bean
     fun userDao(): UserDao = UserDaoJdbc(jdbcTemplate())

@@ -7,4 +7,13 @@ class User(
     var level: Level? = null,
     var login: Int,
     var recommend: Int,
-)
+ ) {
+
+    fun upgradeLevel() {
+        val nextLevel = level?.nextLevel()
+        checkNotNull(nextLevel) { "${level}은 업그레이드가 불가능합니다" }
+        level = nextLevel
+    }
+
+}
+
