@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mail.MailSender
 import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -24,6 +25,10 @@ class UserServiceTest {
     @Autowired
     @Qualifier("testUserDao")
     private lateinit var userDao: UserDao
+
+    @Autowired
+    @Qualifier("testMailSender")
+    private lateinit var mailSender: MailSender
 
     @Autowired
     @Qualifier("testTransactionManager")
@@ -83,7 +88,8 @@ class UserServiceTest {
     @Test
     fun upgradeAllOrNothing() {
         users.forEach { user -> userDao.add(user) }
-        val testUserService = UserService(TestUserLevelUpgradePolicy(userDao, users[3].id), userDao, transactionManager)
+        val testUserService =
+            UserService(TestUserLevelUpgradePolicy(userDao, mailSender, users[3].id), userDao, transactionManager)
 
         try {
             testUserService.upgradeLevels()
@@ -97,8 +103,9 @@ class UserServiceTest {
 
 class TestUserLevelUpgradePolicy (
     userDao: UserDao,
+    mailSender: MailSender,
     private val id: String,
-) : DefaultUserLevelUpgradePolicy(userDao) {
+) : DefaultUserLevelUpgradePolicy(userDao, mailSender) {
 
     override fun upgradeLevel(user: User) {
         if (user.id == id) {

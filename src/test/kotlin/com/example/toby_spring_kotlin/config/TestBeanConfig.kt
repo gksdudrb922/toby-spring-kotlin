@@ -4,6 +4,7 @@ import com.example.toby_spring_kotlin.infra.CountingDataSource
 import com.example.toby_spring_kotlin.user.dao.UserDao
 import com.example.toby_spring_kotlin.user.dao.UserDaoJdbc
 import com.example.toby_spring_kotlin.user.service.DefaultUserLevelUpgradePolicy
+import com.example.toby_spring_kotlin.user.service.DummyMailSender
 import com.example.toby_spring_kotlin.user.service.UserLevelUpgradePolicy
 import com.example.toby_spring_kotlin.user.service.UserService
 import org.springframework.context.annotation.Bean
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.mail.MailSender
 import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
@@ -22,7 +24,11 @@ class TestBeanConfig {
         UserService(testUserLevelUpgradePolicy(), testUserDao(), testTransactionManager(testDataSource()))
 
     @Bean
-    fun testUserLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(testUserDao())
+    fun testUserLevelUpgradePolicy(): UserLevelUpgradePolicy =
+        DefaultUserLevelUpgradePolicy(testUserDao(), testMailSender())
+
+    @Bean
+    fun testMailSender(): MailSender = DummyMailSender()
 
     @Bean
     fun testUserDao(): UserDao = UserDaoJdbc(testJdbcTemplate())

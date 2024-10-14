@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.mail.MailSender
+import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.transaction.PlatformTransactionManager
 import javax.sql.DataSource
 
@@ -22,7 +24,14 @@ class BeanConfig {
     fun userService(): UserService = UserService(userLevelUpgradePolicy(), userDao(), transactionManager(dataSource()))
 
     @Bean
-    fun userLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(userDao())
+    fun userLevelUpgradePolicy(): UserLevelUpgradePolicy = DefaultUserLevelUpgradePolicy(userDao(), mailSender())
+
+    @Bean
+    fun mailSender(): MailSender {
+        val mailSender = JavaMailSenderImpl()
+        mailSender.host = "mail.server.com"
+        return mailSender
+    }
 
     @Bean
     fun transactionManager(dataSource: DataSource): PlatformTransactionManager =
