@@ -24,6 +24,10 @@ class UserServiceTest {
     private lateinit var userService: UserService
 
     @Autowired
+    @Qualifier("testUserServiceImpl")
+    private lateinit var userServiceImpl: UserService
+
+    @Autowired
     @Qualifier("testUserDao")
     private lateinit var userDao: UserDao
 
@@ -54,10 +58,10 @@ class UserServiceTest {
         users.forEach { user -> userDao.add(user) }
 
         val mockMailSender = MockMailSender()
-        val userService =
-            UserService(DefaultUserLevelUpgradePolicy(userDao, mockMailSender), userDao, transactionManager)
+        val userServiceImpl =
+            UserServiceImpl(DefaultUserLevelUpgradePolicy(userDao, mockMailSender), userDao)
 
-        userService.upgradeLevels()
+        userServiceImpl.upgradeLevels()
         checkLevelUpgraded(users[0], false)
         checkLevelUpgraded(users[1], true)
         checkLevelUpgraded(users[2], false)
@@ -97,11 +101,14 @@ class UserServiceTest {
     @Test
     fun upgradeAllOrNothing() {
         users.forEach { user -> userDao.add(user) }
-        val testUserService =
-            UserService(TestUserLevelUpgradePolicy(userDao, mailSender, users[3].id), userDao, transactionManager)
+
+        val txUserService = UserServiceTx(
+            UserServiceImpl(TestUserLevelUpgradePolicy(userDao, mailSender, users[3].id), userDao),
+            transactionManager
+        )
 
         try {
-            testUserService.upgradeLevels()
+            txUserService.upgradeLevels()
             fail("TestUserServiceException expected")
         } catch (_: TestUserServiceException) {
             checkLevelUpgraded(users[1], false)
