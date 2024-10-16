@@ -17,16 +17,20 @@ class UserService(
         val status: TransactionStatus = transactionManager.getTransaction(DefaultTransactionDefinition())
 
         try {
-            val users = userDao.getAll()
-            users.forEach { user ->
-                if (userLevelUpgradePolicy.canUpgradeLevel(user)) {
-                    userLevelUpgradePolicy.upgradeLevel(user)
-                }
-            }
+            upgradeLevelsInternal()
             transactionManager.commit(status)
         } catch (e: Exception) {
             transactionManager.rollback(status)
             throw e
+        }
+    }
+
+    private fun upgradeLevelsInternal() {
+        val users = userDao.getAll()
+        users.forEach { user ->
+            if (userLevelUpgradePolicy.canUpgradeLevel(user)) {
+                userLevelUpgradePolicy.upgradeLevel(user)
+            }
         }
     }
 
