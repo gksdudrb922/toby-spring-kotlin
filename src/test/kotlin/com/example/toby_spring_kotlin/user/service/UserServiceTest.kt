@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mail.MailSender
+import org.springframework.mail.SimpleMailMessage
 import org.springframework.transaction.PlatformTransactionManager
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -52,6 +53,10 @@ class UserServiceTest {
     fun upgradeLevels() {
         users.forEach { user -> userDao.add(user) }
 
+        val mockMailSender = MockMailSender()
+        val userService =
+            UserService(DefaultUserLevelUpgradePolicy(userDao, mockMailSender), userDao, transactionManager)
+
         userService.upgradeLevels()
         checkLevelUpgraded(users[0], false)
         checkLevelUpgraded(users[1], true)
@@ -59,6 +64,10 @@ class UserServiceTest {
         checkLevelUpgraded(users[3], true)
         checkLevelUpgraded(users[4], false)
 
+        val requests = mockMailSender.requests
+        assertEquals(2, requests.size)
+        assertEquals(users[1].email, requests[0])
+        assertEquals(users[3].email, requests[1])
     }
 
     private fun checkLevelUpgraded(user: User, upgraded: Boolean) {
@@ -117,3 +126,17 @@ class TestUserLevelUpgradePolicy (
 }
 
 class TestUserServiceException : RuntimeException()
+
+class MockMailSender: MailSender {
+
+    val requests: MutableList<String> = mutableListOf()
+
+    override fun send(simpleMessage: SimpleMailMessage) {
+        requests.add(simpleMessage.to!![0])
+    }
+
+    override fun send(vararg simpleMessages: SimpleMailMessage?) {
+
+    }
+
+}
