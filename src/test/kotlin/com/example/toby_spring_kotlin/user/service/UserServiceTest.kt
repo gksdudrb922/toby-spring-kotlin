@@ -5,7 +5,13 @@ import com.example.toby_spring_kotlin.user.domain.Level
 import com.example.toby_spring_kotlin.user.domain.User
 import com.example.toby_spring_kotlin.user.service.DefaultUserLevelUpgradePolicy.Companion.MIN_LOGCOUNT_FOR_SILVER
 import com.example.toby_spring_kotlin.user.service.DefaultUserLevelUpgradePolicy.Companion.MIN_RECCOUNT_FOR_GOLD
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.test.context.SpringBootTest
@@ -73,6 +79,29 @@ class UserServiceTest {
     private fun checkUserAndLevel(updated: User, expectedId: String, expectedLevel: Level) {
         assertEquals(expectedId, updated.id)
         assertEquals(expectedLevel, updated.level)
+    }
+
+    @Test
+    fun mockUpgradeLevels() {
+        val mockUserDao = mockk<UserDao>(relaxed = true)
+        val mockMailSender = mockk<MailSender>(relaxed = true)
+        every { mockUserDao.getAll() } returns users
+
+        val userServiceImpl =
+            UserServiceImpl(DefaultUserLevelUpgradePolicy(mockUserDao, mockMailSender), mockUserDao)
+
+        userServiceImpl.upgradeLevels()
+
+        verify(exactly = 2) { mockUserDao.update(any(User::class)) }
+        verify { mockUserDao.update(users[1]) }
+        assertEquals(Level.SILVER, users[1].level)
+        verify { mockUserDao.update(users[3]) }
+        assertEquals(Level.GOLD, users[3].level)
+
+        val mailMessageSlot = mutableListOf<SimpleMailMessage>()
+        verify(exactly = 2) { mockMailSender.send(capture(mailMessageSlot)) }
+        assertEquals(users[1].email, mailMessageSlot[0].to!![0])
+        assertEquals(users[3].email, mailMessageSlot[1].to!![0])
     }
 
     @Test
