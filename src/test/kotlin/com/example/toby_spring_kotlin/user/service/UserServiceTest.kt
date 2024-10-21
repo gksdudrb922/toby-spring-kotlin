@@ -24,10 +24,6 @@ class UserServiceTest {
     private lateinit var userService: UserService
 
     @Autowired
-    @Qualifier("testUserServiceImpl")
-    private lateinit var userServiceImpl: UserService
-
-    @Autowired
     @Qualifier("testUserDao")
     private lateinit var userDao: UserDao
 
@@ -55,18 +51,18 @@ class UserServiceTest {
 
     @Test
     fun upgradeLevels() {
-        users.forEach { user -> userDao.add(user) }
-
+        val mockUserDao = MockUserDao(users)
         val mockMailSender = MockMailSender()
+
         val userServiceImpl =
-            UserServiceImpl(DefaultUserLevelUpgradePolicy(userDao, mockMailSender), userDao)
+            UserServiceImpl(DefaultUserLevelUpgradePolicy(mockUserDao, mockMailSender), mockUserDao)
 
         userServiceImpl.upgradeLevels()
-        checkLevelUpgraded(users[0], false)
-        checkLevelUpgraded(users[1], true)
-        checkLevelUpgraded(users[2], false)
-        checkLevelUpgraded(users[3], true)
-        checkLevelUpgraded(users[4], false)
+
+        val updated = mockUserDao.updated
+        assertEquals(2, updated.size)
+        checkUserAndLevel(updated[0], "2", Level.SILVER)
+        checkUserAndLevel(updated[1], "4", Level.GOLD)
 
         val requests = mockMailSender.requests
         assertEquals(2, requests.size)
@@ -74,12 +70,9 @@ class UserServiceTest {
         assertEquals(users[3].email, requests[1])
     }
 
-    private fun checkLevelUpgraded(user: User, upgraded: Boolean) {
-        val userUpdate = userDao.get(user.id)
-        when (upgraded) {
-            true -> assertEquals(user.level?.nextLevel(), userUpdate.level)
-            false -> assertEquals(user.level, userUpdate.level)
-        }
+    private fun checkUserAndLevel(updated: User, expectedId: String, expectedLevel: Level) {
+        assertEquals(expectedId, updated.id)
+        assertEquals(expectedLevel, updated.level)
     }
 
     @Test
@@ -115,6 +108,14 @@ class UserServiceTest {
         }
     }
 
+    private fun checkLevelUpgraded(user: User, upgraded: Boolean) {
+        val userUpdate = userDao.get(user.id)
+        when (upgraded) {
+            true -> assertEquals(user.level?.nextLevel(), userUpdate.level)
+            false -> assertEquals(user.level, userUpdate.level)
+        }
+    }
+
 }
 
 class TestUserLevelUpgradePolicy (
@@ -144,6 +145,36 @@ class MockMailSender: MailSender {
 
     override fun send(vararg simpleMessages: SimpleMailMessage?) {
 
+    }
+
+}
+
+class MockUserDao(
+    private val users: List<User>
+) : UserDao {
+
+    val updated: MutableList<User> = mutableListOf()
+
+    override fun add(user: User) {
+        throw UnsupportedOperationException()
+    }
+
+    override fun get(id: String): User {
+        throw UnsupportedOperationException()
+    }
+
+    override fun deleteAll() {
+        throw UnsupportedOperationException()
+    }
+
+    override fun getCount(): Int {
+        throw UnsupportedOperationException()
+    }
+
+    override fun getAll(): List<User> = users
+
+    override fun update(user: User) {
+        updated.add(user)
     }
 
 }
